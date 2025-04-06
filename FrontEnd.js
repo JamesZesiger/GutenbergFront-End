@@ -16,6 +16,7 @@ async function getData(str){
     getText(json.results[0].title, text);
   
 }
+
 async function getText(title, str){
     const request = await fetch(str);
     const txt = await request.text();
@@ -28,10 +29,12 @@ async function saveFile(filename, text) {
             console.error('Error reading directory:', err);
             return;
         }
+
         const fileCount = files.length;
-        console.log(`Number of files in directory: ${fileCount}`);
+        console.log(`Number of books saved: ${fileCount}`);
+
         if (fileCount >= maxFile) {
-            console.log(`Maximum file limit reached (${maxFile}).`);
+            console.log(`Number of saved books exceeds limit: (${maxFile}).`);
             let oldestTime = Infinity;
             let oldestFile = null;
             files.forEach(file => {
@@ -42,26 +45,28 @@ async function saveFile(filename, text) {
                     oldestTime = stats.mtimeMs;
                     oldestFile = filePath;
                 }
+
             });
 
             if (oldestFile) {
-                fs.unlink(oldestFile, (err) => {
-                    if (err) {
-                        console.error('Error deleting file:', err);
+                fs.unlink(oldestFile, (error) => {
+                    if (error) {
+                        console.error('Error deleting book:', error);
                     } else {
-                        console.log(`Deleted oldest file: ${oldestFile}`);
+                        console.log(`Oldest book deleted: ${oldestFile}`);
                     }
                 });
             }
+
         } else {
-            console.log(`You can add more files. Current count: ${fileCount}`);
+            console.log(`Current count: ${fileCount}`);
         }
 
-        fs.writeFile(path.join(directory, filename), text, (err) => {
-            if (err) {
-                console.error('Error writing file:', err);
+        fs.writeFile(path.join(directory, filename), text, (error) => {
+            if (error) {
+                console.error('Error saving book:', error);
             } else {
-                console.log(`File saved: ${filename}`);
+                console.log(`Book saved: ${filename}`);
             }
         });
     });
