@@ -1,7 +1,12 @@
 const url = "https://gutendex.com/books?search=";
 const fs = require('fs');
 const path = require('path');
+const readline = require('readline');
 
+const rl = readline.createInterface({
+    input: process.stdin,
+    output: process.stdout
+});
 
 const maxFile = 10;
 const directory = "./Books";
@@ -72,5 +77,19 @@ async function saveFile(filename, text) {
     });
 }
 
+function GetInput() {
+    rl.question('Enter command: ', (input) => {
+        if (input === 'exit') {
+            rl.close();
+            return;
+        } else if (input.startsWith('search')) {
+            const searchTerm = input.split(' ').slice(1).join(' ');
+            getData(searchTerm);
+        } else {
+            console.log('Invalid command');
+        }
+        GetInput();
+    });
+}
 
-getData("sherlock")
+GetInput();
