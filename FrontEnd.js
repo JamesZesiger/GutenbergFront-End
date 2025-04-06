@@ -79,7 +79,8 @@ async function saveFile(filename, text) {
 
 function GetInput() {
     rl.question('Enter command: ', (input) => {
-        if (input === 'exit') {
+        if (input === 'exit' || input === 'quit') {
+            console.log('Exiting...');
             rl.close();
             return;
         } else if (input.startsWith('search')) {
