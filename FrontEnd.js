@@ -148,6 +148,7 @@ async function GetInput() {
     } else if (input === "search") {
         const search = await askQuestion("Enter search term: ");
         getData(search);
+        GetInput()
     }else if (input === "list") {
         await listBooks();
         GetInput();
@@ -159,4 +160,3 @@ async function GetInput() {
 
 
 GetInput();
-
