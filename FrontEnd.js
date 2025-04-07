@@ -100,23 +100,63 @@ async function saveFile(filename, text) {
         });
     });
 }
-
-function GetInput() {
-    rl.question('Enter command: ', async (input) => {
-        if (input === 'exit' || input === 'quit') {
-            console.log('Exiting...');
-            rl.close();
+async function printBook(title){
+    fs.readFile(path.join(directory, title), 'utf8', async (err, data) => {
+        if (err) {
+            console.error('Error reading book:', err);
             return;
-        } else if (input.startsWith('search')) {
-            const searchTerm = input.split(' ').slice(1).join(' ');
-            getData(searchTerm);
-        } else if (input === 'list') {
-            await listBooks();
-        } else {
-            console.log('Invalid command');
+        }
+
+        let i = 0;
+        while (i < data.length) {
+            const text = data.slice(i, i + 1800);
+            console.log(text);
+
+            const answer = await askQuestion("Next page? (y/n): ");
+            if (answer === 'y' || answer === 'Y') {
+                i += 1800;
+            } else if(answer === 'n' || answer === 'N') {
+                console.clear();
+                GetInput();
+                return;
+            } else {
+                console.log("Invalid input. Please enter 'y' or 'n'.");
+            }
         }
         GetInput();
+        return;
     });
 }
 
+function askQuestion(query) {
+    return new Promise(resolve => {
+        rl.question(query, answer =>{
+            resolve(answer);
+        });
+    });
+}
+
+async function GetInput() {
+    const input = await askQuestion("Enter command: ");
+    if (input === "exit" || input === "quit") {
+        rl.close();
+        return;
+    }
+    if (input === "read") {
+        const title = await askQuestion("Enter book title: ");
+        await printBook(title);
+    } else if (input === "search") {
+        const search = await askQuestion("Enter search term: ");
+        getData(search);
+    }else if (input === "list") {
+        await listBooks();
+        GetInput();
+    } else {
+        console.log("Invalid command. Please try again.");
+        GetInput();
+    }
+}
+
+
 GetInput();
+
