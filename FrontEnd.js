@@ -22,6 +22,30 @@ async function getData(str){
   
 }
 
+function listBooks() {
+    return new Promise((resolve, reject) => {
+        fs.readdir(directory, (err, files) => {
+            if (err) {
+                console.error('Error reading directory:', err);
+                reject(err);
+            } else {
+                let count = 0;
+                console.log('Books in directory:');
+                console.log('-------------------');
+                files.forEach(file => {
+                    if (!file.startsWith('File')) {
+                        console.log(file);
+                        count++;
+                    }
+                });
+                console.log('-------------------');
+                console.log(`Total books: ${count}`); 
+                resolve();
+            }
+        });
+    });
+}
+
 async function getText(title, str){
     const request = await fetch(str);
     const txt = await request.text();
@@ -78,7 +102,7 @@ async function saveFile(filename, text) {
 }
 
 function GetInput() {
-    rl.question('Enter command: ', (input) => {
+    rl.question('Enter command: ', async (input) => {
         if (input === 'exit' || input === 'quit') {
             console.log('Exiting...');
             rl.close();
@@ -86,6 +110,8 @@ function GetInput() {
         } else if (input.startsWith('search')) {
             const searchTerm = input.split(' ').slice(1).join(' ');
             getData(searchTerm);
+        } else if (input === 'list') {
+            await listBooks();
         } else {
             console.log('Invalid command');
         }
