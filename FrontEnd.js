@@ -22,6 +22,29 @@ async function getData(str){
   
 }
 
+async function getAuthor(str) {
+    try {
+        const request = await fetch(url + str);
+        const json = await request.json();
+
+        if (!json.results || json.results.length === 0) {
+            console.log('No results found.');
+            return;
+        }
+
+        const auth = json.results[0].authors[0].name;
+        console.log("Books by " + auth + ": ");
+
+        // Use json.results.length instead of json.count
+        for (let i = 0; i < json.results.length; ++i) {
+            console.log(json.results[i].title);
+        }
+    } catch (error) {
+        console.error('Error fetching author data:', error);
+    }
+}
+
+
 function listBooks() {
     return new Promise((resolve, reject) => {
         fs.readdir(directory, (err, files) => {
@@ -153,7 +176,11 @@ async function GetInput() {
         const search = await askQuestion("Enter search term: ");
         await getData(search);
         GetInput()
-    }else if (input === "list") {
+    } else if (input === "author") {
+        const author = await askQuestion("Enter author name: ");
+        await getAuthor(author);
+        GetInput()
+    } else if (input === "list") {
         await listBooks();
         GetInput();
     } else {
