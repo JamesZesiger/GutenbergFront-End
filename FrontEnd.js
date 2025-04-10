@@ -173,7 +173,7 @@ async function GetInput() {
         const title = await askQuestion("Enter book title: ");
         await printBook(title);
     } else if (input === "search") {
-        const search = await askQuestion("Enter search term: ");
+        const search = await askQuestion("Enter book title: ");
         await getData(search);
         GetInput()
     } else if (input === "author") {
